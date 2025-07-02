@@ -19,8 +19,9 @@ public class CsvQuestionDao implements QuestionDao {
 
     @Override
     public List<Question> findAll() {
-        try(InputStream resourceStream = getFileFromResourceAsStream(fileNameProvider.getTestFileName());
-            InputStreamReader inputResourceStreamReader = new InputStreamReader(resourceStream, StandardCharsets.UTF_8)) {
+        try (InputStream resourceStream = getFileFromResourceAsStream(fileNameProvider.getTestFileName());
+             InputStreamReader inputResourceStreamReader =
+                     new InputStreamReader(resourceStream, StandardCharsets.UTF_8)) {
             CsvToBean<QuestionDto> csvToQuestionDto = new CsvToBeanBuilder<QuestionDto>(inputResourceStreamReader)
                     .withType(QuestionDto.class)
                     .withSeparator(';')
@@ -34,6 +35,7 @@ public class CsvQuestionDao implements QuestionDao {
             throw new QuestionReadException(exception.getMessage(), exception);
         }
     }
+
     private InputStream getFileFromResourceAsStream(String fileName) {
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(fileName);

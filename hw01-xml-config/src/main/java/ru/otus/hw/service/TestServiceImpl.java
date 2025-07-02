@@ -11,6 +11,7 @@ import java.util.List;
 public class TestServiceImpl implements TestService {
 
     private final IOService ioService;
+
     private final QuestionDao questionDao;
 
     @Override
@@ -18,13 +19,12 @@ public class TestServiceImpl implements TestService {
         ioService.printLine("");
         ioService.printFormattedLine("Please answer the questions below%n");
         List<Question> questions = questionDao.findAll();
-        for(int i = 0; questions.size() > i; i++){
-            ioService.printFormattedLine(i+1 + ". %s", questions.get(i).text());
+        for (int i = 0; questions.size() > i; i++) {
+            ioService.printFormattedLine(i + 1 + ". %s", questions.get(i).text());
             List<Answer> answers = questions.get(i).answers();
-            for (int j = 0; answers.size() > j; j++){
+            for (int j = 0; answers.size() > j; j++) {
                 ioService.printFormattedLine(" " + (j + 1) + ") %s", answers.get(j).text());
             }
         }
-        // Получить вопросы из дао и вывести их с вариантами ответов
     }
 }
