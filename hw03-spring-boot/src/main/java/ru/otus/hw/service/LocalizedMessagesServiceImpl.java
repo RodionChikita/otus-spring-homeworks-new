@@ -11,9 +11,10 @@ public class LocalizedMessagesServiceImpl implements LocalizedMessagesService {
 
     private final LocaleConfig localeConfig;
 
-    // Доделать
+    private final MessageSource messageSource;
+
     @Override
-    public String getMessage(String code, Object... args) {
-        return null;
+    public String getMessage(String key, Object... args) {
+        return messageSource.getMessage(key, args, localeConfig.getLocale());
     }
 }
