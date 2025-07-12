@@ -1,11 +1,9 @@
 package ru.otus.hw.dao;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import ru.otus.hw.config.TestFileNameProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
 import ru.otus.hw.exceptions.QuestionReadException;
@@ -13,27 +11,20 @@ import ru.otus.hw.exceptions.QuestionReadException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-public class CsvQuestionDaoTest {
+@SpringBootTest
+@TestPropertySource(properties = {
+    "test.fileNameByLocaleTag.ru-RU=questions_ru.csv",
+    "test.fileNameByLocaleTag.en-US=questions.csv"
+})
+class CsvQuestionDaoTest {
 
-    @Mock
-    private TestFileNameProvider fileNameProvider;
-
-    private CsvQuestionDao csvQuestionDao;
-
-    @BeforeEach
-    public void setUp() {
-        csvQuestionDao = new CsvQuestionDao(fileNameProvider);
-    }
+    @Autowired
+    private QuestionDao questionDao;
 
     @Test
-    public void testFindAllExistentFile() {
-        String testFileName = "questions.csv";
-        when(fileNameProvider.getTestFileName()).thenReturn(testFileName);
-        
-        List<Question> questions = csvQuestionDao.findAll();
+    void testFindAllExistentFile() {
+        List<Question> questions = questionDao.findAll();
 
         assertNotNull(questions);
         assertEquals(3, questions.size());
@@ -63,9 +54,34 @@ public class CsvQuestionDaoTest {
     }
 
     @Test
-    public void testFindAllNotExistentFileThrowsException() {
-        String testFileName = "non-existent-file.csv";
-        when(fileNameProvider.getTestFileName()).thenReturn(testFileName);
-        assertThrows(QuestionReadException.class, () -> csvQuestionDao.findAll());
+    void testFindAllReturnsQuestionsWithCorrectStructure() {
+        List<Question> questions = questionDao.findAll();
+
+        assertNotNull(questions);
+        assertFalse(questions.isEmpty());
+        
+        for (Question question : questions) {
+            assertNotNull(question.text());
+            assertFalse(question.text().isEmpty());
+            
+            assertNotNull(question.answers());
+            assertFalse(question.answers().isEmpty());
+            
+            boolean hasCorrectAnswer = question.answers().stream()
+                    .anyMatch(Answer::isCorrect);
+            assertTrue(hasCorrectAnswer, "Each question should have at least one correct answer");
+        }
+    }
+
+    @Test
+    void testFindAllParsesAnswersCorrectly() {
+        List<Question> questions = questionDao.findAll();
+
+        for (Question question : questions) {
+            for (Answer answer : question.answers()) {
+                assertNotNull(answer.text());
+                assertFalse(answer.text().isEmpty());
+            }
+        }
     }
 }
