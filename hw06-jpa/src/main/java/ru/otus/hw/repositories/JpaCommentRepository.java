@@ -2,7 +2,6 @@ package ru.otus.hw.repositories;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Comment;
 
@@ -41,10 +40,6 @@ public class JpaCommentRepository implements CommentRepository {
         Comment managed = em.find(Comment.class, id);
         if (managed != null) {
             em.remove(managed);
-            return;
         }
-        Query query = em.createQuery("delete from Comment c where c.id = :id");
-        query.setParameter("id", id);
-        query.executeUpdate();
     }
 }
