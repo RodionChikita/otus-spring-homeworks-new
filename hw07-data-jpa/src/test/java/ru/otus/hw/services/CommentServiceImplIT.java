@@ -46,7 +46,7 @@ class CommentServiceImplIT {
     }
 
     @Test
-    @DisplayName("findAllByBookId: должен возвращать список комментариев книги")
+    @DisplayName("findByBookId: должен возвращать список комментариев книги")
     void findAllByBookId_ShouldReturnList() {
         commentService.insert("c1", 1L);
         commentService.insert("c2", 1L);
