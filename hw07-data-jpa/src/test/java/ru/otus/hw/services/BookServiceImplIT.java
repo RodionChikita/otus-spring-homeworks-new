@@ -53,4 +53,45 @@ class BookServiceImplIT {
                 .ignoringCollectionOrder()
                 .isEqualTo(expected);
     }
+
+    @Test
+    @DisplayName("insert: должен создавать новую книгу")
+    void insert_ShouldCreateNewBook() {
+        var saved = bookService.insert("BookTitle_4", 1L, Set.of(1L, 2L));
+        assertThat(saved.getId()).isPositive();
+
+        var reloaded = bookService.findById(saved.getId());
+        assertThat(reloaded).isPresent();
+
+        var expected = new Book(
+                saved.getId(),
+                "BookTitle_4",
+                new Author(1L, "Author_1"),
+                List.of(new Genre(1L, "Genre_1"), new Genre(2L, "Genre_2"))
+        );
+
+        assertThat(reloaded.get())
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("findAll: должен загружать список всех книг")
+    void findAll_ShouldReturnAllBooks() {
+        var expected = List.of(
+                new Book(1L,"BookTitle_1", new Author(1L,"Author_1"),
+                        List.of(new Genre(1L,"Genre_1"), new Genre(2L,"Genre_2"))),
+                new Book(2L,"BookTitle_2", new Author(2L,"Author_2"),
+                        List.of(new Genre(3L,"Genre_3"), new Genre(4L,"Genre_4"))),
+                new Book(3L,"BookTitle_3", new Author(3L,"Author_3"),
+                        List.of(new Genre(5L,"Genre_5"), new Genre(6L,"Genre_6")))
+        );
+
+        var actual = bookService.findAll();
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .ignoringCollectionOrder()
+                .isEqualTo(expected);
+    }
 }

@@ -8,6 +8,8 @@ insert into books(id, title, author_id) values
 (2,'BookTitle_2',2),
 (3,'BookTitle_3',3);
 
+alter table books alter column id restart with 4;
+
 insert into books_genres(book_id, genre_id) values
 (1,1),(1,2),
 (2,3),(2,4),
