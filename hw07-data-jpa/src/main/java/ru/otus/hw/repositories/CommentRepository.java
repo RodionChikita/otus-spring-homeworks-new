@@ -6,6 +6,5 @@ import ru.otus.hw.models.Comment;
 import java.util.List;
 
 public interface CommentRepository extends CrudRepository<Comment, Long> {
-
-    List<Comment> findByBookId(long bookId);
+    List<Comment> findByBookId(Long bookId);
 }
